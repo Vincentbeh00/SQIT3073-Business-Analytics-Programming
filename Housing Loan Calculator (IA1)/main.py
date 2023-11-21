@@ -50,16 +50,21 @@ def adjust_dsr_threshold():
     global eligible_dsr
     new_threshold = float_validation("Enter the new eligible DSR threshold in %: ", lower_limit=0, upper_limit=85)
     eligible_dsr = new_threshold
+    print (f"New threshold @{eligible_dsr:.2f}% is saved.")
 
 #Function to save loan details to a file using pickle
 def save_loan(loan_details):
-    with open('loan_calculations.pkl', 'wb') as file:
-        return pickle.dump(loan_details,file)
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_directory, 'loan_calculations.pkl')
+    with open(file_path, 'wb') as file:
+        return pickle.dump(loan_details, file)
 
 #Function to load loan details from a file using pickle  
 def load_loan_details():
-    if os.path.exists('loan_calculations.pkl'):
-        with open('loan_calculations.pkl','rb') as file:
+    current_directory = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(current_directory, 'loan_calculations.pkl')
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as file:
             return pickle.load(file)
     else:
         return []
@@ -98,7 +103,7 @@ def main():
             print(f"Monthly Instalment: RM{monthly_payment:.2f}")
             print(f"Total Payment: RM{total_payment:.2f}")
             print(f"Debt Service Ratio (DSR): {dsr:.2f}%")
-            print(f"DSR Threshold: {eligible_dsr}%")
+            print(f"DSR Threshold: {eligible_dsr:.2f}%")
             print(f"Eligibility: {loan_eligibility}")
 
             loan_details.append({
@@ -110,7 +115,7 @@ def main():
                 'Monthly Payment': f'RM{monthly_payment:.2f}',
                 'Total Payment': f'RM{total_payment:.2f}',
                 'DSR': f'{dsr:.2f}%',
-                'DSR Threshold': f'{eligible_dsr}%',  # Add DSR needed for each loan
+                'DSR Threshold': f'{eligible_dsr:.2f}%',  # Add DSR needed for each loan
                 'Eligibility': loan_eligibility,
             })
             save_loan(loan_details)
@@ -127,19 +132,19 @@ def main():
                         print (f"{key}: {value}")
             
             #Loan Detail Deletion option for user
-            delete_choice = input("\nWould you like to delete a calculation? Enter the calculation number to delete (0 to cancel): ")
-            if delete_choice.isdigit():
-                delete_index = int(delete_choice)
-                if delete_index > 0 and delete_index <= len(loan_details):
-                    deleted_calculation = loan_details.pop(delete_index - 1)
-                    print(f"\nCalculation {delete_index} deleted.")
-                    save_loan(loan_details)
-                elif delete_index == 0:
-                    print("Deletion cancelled.")
+                delete_choice = input("\nWould you like to delete a calculation? Enter the calculation number to delete (0 to cancel): ")
+                if delete_choice.isdigit():
+                    delete_index = int(delete_choice)
+                    if delete_index > 0 and delete_index <= len(loan_details):
+                        deleted_calculation = loan_details.pop(delete_index - 1)
+                        print(f"\nCalculation {delete_index} deleted.")
+                        save_loan(loan_details)
+                    elif delete_index == 0:
+                        print("Deletion cancelled.")
+                    else:
+                        print ("Invalid Calculation number. No changes made.")
                 else:
-                    print ("Invalid Calculation number. No changes made.")
-            else:
-                print("Invalid input, please enter a number.")
+                    print("Invalid input, please enter a number.")
 
         elif choice == '3':
              #Code to modify the DSR threshold
